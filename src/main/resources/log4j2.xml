@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="ERROR">
+    <Properties>
+        <Property name="pattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level - [ %21.21t ] %30.30logger{1.} - %msg%n" />
+    </Properties>
+
+    <!--OFF、FATAL、ERROR、WARN、INFO、DEBUG、TRACE、ALL-->
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY" />
+            <PatternLayout charset="UTF-8" pattern="${pattern}"/>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="com.annwyn" level="INFO" />
+        <Logger name="com.zaxxer.hikari" level="WARN" />
+
+        <Root level="INFO">
+            <appender-ref ref="console" />
+        </Root>
+
+    </Loggers>
+
+</Configuration>

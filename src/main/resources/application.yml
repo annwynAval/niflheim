@@ -1,0 +1,31 @@
+
+#  thymeleaf:
+#    prefix: classpath:/thymeleaf/
+#    mode: TEXT
+spring:
+  freemarker:
+    template-loader-path: classpath:/freemarker/
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+com:
+  annwyn:
+    niflheim:
+      output-directory: /Users/annwyn/workspace/development/niflheim/haila
+      package-name: com.annwyn.haila.mybatis
+      template-engine: com.annwyn.niflheim.core.engine.FreemarkerTemplateEngine
+      type-registry: com.annwyn.niflheim.core.registry.MysqlTypeRegistry
+      include-entities:
+        - tableName: order_order
+          modelName: Order
+        - tableName: order_order_detail
+          modelName: OrderDetail
+        - tableName: order_waybill
+          modelName: Waybill
+
+      java-name-suffixes:
+        - order
+
+
+
