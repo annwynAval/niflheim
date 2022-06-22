@@ -24,4 +24,6 @@ public class NiflheimConfiguration {
     public AbstractTypeRegistry abstractTypeRegistry(NiflheimProperties niflheimProperties) throws ReflectiveOperationException {
         return ReflectionUtils.accessibleConstructor(niflheimProperties.getTypeRegistry()).newInstance();
     }
+
+
 }

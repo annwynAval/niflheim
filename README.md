@@ -19,10 +19,6 @@ spring:
 com:
   annwyn:
     niflheim:
-      # 生成实体类的输入目录, 必填
-      output-directory: /Users/annwyn/workspace/workbench/annwyn/niflheim/output
-      # 生成实体类的包名, 必填
-      package-name: com.annwyn.eris
       # 文件生成引擎. 可选值: com.annwyn.niflheim.core.engine.FreemarkerTemplateEngine与com.annwyn.niflheim.core.engine.ThymeleafTemplateEngine
       # 可以自行扩展, 只需要继承com.annwyn.niflheim.core.engine.AbstractTemplateEngine即可. 默认选择com.annwyn.niflheim.core.engine.FreemarkerTemplateEngine
       # com.annwyn.niflheim.core.engine.FreemarkerTemplateEngine使用freemarker生成文件
@@ -34,7 +30,11 @@ com:
       # 映射数据库类型转换jdbc类型以及jdbc类型转换java类型
       # 其他数据库需要继承AbstractTypeRegistry并进行配置
       type-registry: com.annwyn.niflheim.core.registry.MysqlTypeRegistry
-      # 需要生成的表, tableName表示生成的表名, modelName表示生成的类名称
+      # 生成实体类的输入目录, 必填
+      output-directory: /Users/annwyn/workspace/workbench/annwyn/niflheim/output
+      # 生成实体类的包名, 必填
+      package-name: com.annwyn.eris
+      # 需要生成的表, tableName表示生成的表名, modelName表示生成的类名称. 如果没有该配置, 表示转换数据库中所有的表
       include-entities:
         - tableName: order_order
           modelName: Order

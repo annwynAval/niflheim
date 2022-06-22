@@ -25,12 +25,24 @@ public class DatabaseScanner {
     @Resource
     private AbstractTypeRegistry abstractTypeRegistry;
 
+    /**
+     * 扫描表, 获取表结构信息
+     * @return .
+     * @throws SQLException .
+     */
     public List<TableModel> scanTables() throws SQLException {
         try (Connection connection = this.dataSource.getConnection()) {
             return this.scanTables(connection, connection.getCatalog());
         }
     }
 
+    /**
+     * 扫描表, 获取表结构信息
+     * @param connection .
+     * @param catalog .
+     * @return .
+     * @throws SQLException .
+     */
     private List<TableModel> scanTables(Connection connection, String catalog) throws SQLException {
         final List<TableModel> tableModels = new ArrayList<>();
         ResultSet resultSet = connection.getMetaData().getTables(catalog, null, null, null);
@@ -48,6 +60,14 @@ public class DatabaseScanner {
         return tableModels;
     }
 
+    /**
+     * 扫描表中的字段信息, 构建字段结构信息
+     * @param connection .
+     * @param catalog .
+     * @param tableName .
+     * @return .
+     * @throws SQLException .
+     */
     private List<TableColumnModel> scanTableColumns(Connection connection, String catalog, String tableName) throws SQLException {
         final List<TableColumnModel> tableColumnModels = new ArrayList<>();
         final Set<String> primaryKeys = this.scanTablePrimaryKey(connection, catalog, tableName);
@@ -65,6 +85,14 @@ public class DatabaseScanner {
         return tableColumnModels;
     }
 
+    /**
+     * 扫描表中的主键信息
+     * @param connection .
+     * @param catalog .
+     * @param tableName .
+     * @return .
+     * @throws SQLException .
+     */
     private Set<String> scanTablePrimaryKey(Connection connection, String catalog, String tableName) throws SQLException {
         final Set<String> primaryKeys = new HashSet<>();
         ResultSet resultSet = connection.getMetaData().getPrimaryKeys(catalog, null, tableName);

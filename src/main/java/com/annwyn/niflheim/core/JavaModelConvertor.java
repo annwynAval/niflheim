@@ -27,6 +27,11 @@ public class JavaModelConvertor {
     @Resource
     private NiflheimProperties niflheimProperties;
 
+    /**
+     * 解析数据库表结构, 生成需要的数据库实体类配置信息
+     * @param tableModels .
+     * @return .
+     */
     public List<JavaModel> convertJavaModels(List<TableModel> tableModels) {
         Map<String, NiflheimProperties.ConvertModelEntity> convertModelEntityCaches = this.buildConvertModelCaches();
 
@@ -67,18 +72,17 @@ public class JavaModelConvertor {
      * @return .
      */
     private String getConvertModelName(Map<String, NiflheimProperties.ConvertModelEntity> convertModelEntityCaches, TableModel tableModel) {
-        if(!CollectionUtils.isEmpty(convertModelEntityCaches)) {
-            NiflheimProperties.ConvertModelEntity convertModelEntity = convertModelEntityCaches.get(tableModel.getTableName());
-            return convertModelEntity.getModelName();
+        if(convertModelEntityCaches.containsKey(tableModel.getTableName())) {
+            // 如果在include-entities中存在, 使用配置里面的实体名称
+            return convertModelEntityCaches.get(tableModel.getTableName()).getModelName();
         }
 
-        if(CollectionUtils.isEmpty(this.niflheimProperties.getJavaNameSuffixes())) {
-            return tableModel.getTableName();
+        // 如果配置中有配置java-name-suffixes, 就需要将前缀去掉, 然后再进行大小写转换.
+        String tableName = tableModel.getTableName();
+        if(!CollectionUtils.isEmpty(this.niflheimProperties.getJavaNameSuffixes())) {
+            tableName = this.niflheimProperties.getJavaNameSuffixes().stream()
+                    .reduce(tableModel.getTableName(), (result, element) -> result.replaceAll(element, ""));
         }
-
-        String tableName = this.niflheimProperties.getJavaNameSuffixes().stream()
-                .reduce(tableModel.getTableName(), (result, element) -> result.replaceAll(element, ""));
-
         return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, tableName);
     }
 
@@ -98,6 +102,7 @@ public class JavaModelConvertor {
     }
 
     private Map<String, NiflheimProperties.ConvertModelEntity> buildConvertModelCaches() {
+        // 如果配置中没有指定include-entities, 表示需要全部转换.
         if(CollectionUtils.isEmpty(this.niflheimProperties.getIncludeEntities())) {
             return Collections.emptyMap();
         }

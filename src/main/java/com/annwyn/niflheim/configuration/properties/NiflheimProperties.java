@@ -33,7 +33,7 @@ public class NiflheimProperties implements Serializable {
     private List<String> javaNameSuffixes;
 
     /**
-     * 需要转换的表, 如果没有名字
+     * 需要转换的表, 如果没有设置的话, 表示转换数据库中所有表
      */
     private List<ConvertModelEntity> includeEntities;
 

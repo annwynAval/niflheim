@@ -53,14 +53,27 @@ public abstract class AbstractTypeRegistry implements InitializingBean {
         return this.jdbcTypeCaches.get(typeName);
     }
 
+    /**
+     * jdbc类型 - java类之间的映射
+     * @param jdbcType .
+     * @param clazz .
+     */
     protected void registerJavaType(JDBCType jdbcType, Class<?> clazz) {
         this.javaTypeCaches.put(jdbcType, clazz);
     }
 
+    /**
+     * 数据库的字段类型 - jdbc类型之间的映射
+     * @param databaseName .
+     * @param jdbcType .
+     */
     protected void registerJdbcType(String databaseName, JDBCType jdbcType) {
         this.jdbcTypeCaches.put(databaseName, jdbcType);
     }
 
+    /**
+     * 注册jdbc类型与java类型之间的映射
+     */
     protected void registerJavaTypes() {
         this.registerJavaType(JDBCType.BOOLEAN, Boolean.class);
         this.registerJavaType(JDBCType.BIT, Boolean.class);
@@ -89,6 +102,10 @@ public abstract class AbstractTypeRegistry implements InitializingBean {
         this.registerJavaType(JDBCType.OTHER, Object.class);
     }
 
+    /**
+     * 注册数据库类型与jdbc类型之间的映射.
+     * 每个数据库的类型都是有些许不同的, 这边需要自己实现一个类来进行映射
+     */
     protected abstract void registerJdbcTypes();
 
     @Override
