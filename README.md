@@ -15,7 +15,16 @@ spring:
     url: xxx
     username: xxx
     password: xxx
+    
+  # 使用ThymeleafTemplateEngine时必须配置. 后缀名在程序中已经写死, 不要配置.
+  thymeleaf:
+    prefix: classpath:/thymeleaf/
+    mode: TEXT
 
+  # 使用FreemarkerTemplateEngine时必须配置.
+  freemarker:
+    template-loader-path: classpath:/freemarker/
+    
 com:
   annwyn:
     niflheim:
@@ -34,24 +43,19 @@ com:
       output-directory: /Users/annwyn/workspace/workbench/annwyn/niflheim/output
       # 生成实体类的包名, 必填
       package-name: com.annwyn.eris
-      # 需要生成的表, tableName表示生成的表名, modelName表示生成的类名称. 如果没有该配置, 表示转换数据库中所有的表
-      include-entities:
-        - tableName: order_order
-          modelName: Order
-      # 表名前缀, 生成的java类的类名会去除指定的前缀. 如果指定了include-entities, 该属性会被忽略
-      java-name-suffixes:
-        - tbs_
-        - ths_
-        - tms_
-        - tss_
+      # 需要生成的表, 优先级高, 先判断include-tables再判断exclusion-tables
+      include-tables:
+        - table2
+      # 忽略生成的表, 优先级低, 先判断include-tables再判断exclusion-tables
+      exclusion-tables:
+        - table1
+      # 需要重命名的表
+      override-tables:
+        - model-name: modelName
+          table-name: tableName
+      # 去除表名前缀
+      remove-suffixes:
+        - table_suffix
 
-  # 使用ThymeleafTemplateEngine时必须配置. 后缀名在程序中已经写死, 不要配置.
-  thymeleaf:
-     prefix: classpath:/thymeleaf/
-     mode: TEXT
-
-  # 使用FreemarkerTemplateEngine时必须配置.
-  freemarker:
-    template-loader-path: classpath:/freemarker/
 
 ```

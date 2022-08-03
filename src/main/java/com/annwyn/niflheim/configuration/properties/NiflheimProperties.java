@@ -30,12 +30,22 @@ public class NiflheimProperties implements Serializable {
     /**
      * 表名需要去除的前缀
      */
-    private List<String> javaNameSuffixes;
+    private List<String> removeSuffixes;
 
     /**
      * 需要转换的表, 如果没有设置的话, 表示转换数据库中所有表
      */
-    private List<ConvertModelEntity> includeEntities;
+    private List<String> includeTables;
+
+    /**
+     * 不需要转换的表, 如果没有设置, 表示转换数据库中所有表
+     */
+    private List<String> exclusionTables;
+
+    /**
+     * 需要转换的表, 如果没有设置的话, 表示转换数据库中所有表
+     */
+    private List<OverrideTable> overrideTables;
 
     /**
      * 数据库转换类型
@@ -47,9 +57,8 @@ public class NiflheimProperties implements Serializable {
      */
     private Class<? extends AbstractTemplateEngine> templateEngine = FreemarkerTemplateEngine.class;
 
-
     @Data
-    public static class ConvertModelEntity implements Serializable {
+    public static class OverrideTable implements Serializable {
 
         /**
          * 表名
@@ -60,7 +69,6 @@ public class NiflheimProperties implements Serializable {
          * 实体名称
          */
         private String modelName;
-
 
     }
 

@@ -8,6 +8,8 @@ import com.annwyn.niflheim.core.models.TableColumnModel;
 import com.annwyn.niflheim.core.models.TableModel;
 import com.annwyn.niflheim.core.registry.AbstractTypeRegistry;
 import com.google.common.base.CaseFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -21,6 +23,8 @@ import java.util.stream.Collectors;
 @Component
 public class JavaModelConvertor {
 
+    private final Logger logger = LoggerFactory.getLogger(JavaModelConvertor.class);
+
     @Resource
     private AbstractTypeRegistry abstractTypeRegistry;
 
@@ -33,18 +37,18 @@ public class JavaModelConvertor {
      * @return .
      */
     public List<JavaModel> convertJavaModels(List<TableModel> tableModels) {
-        Map<String, NiflheimProperties.ConvertModelEntity> convertModelEntityCaches = this.buildConvertModelCaches();
+        Map<String, NiflheimProperties.OverrideTable> overrideTableCaches = this.buildOverrideTableCaches();
 
         final List<JavaModel> javaModels = new ArrayList<>(tableModels.size());
         for (TableModel tableModel : tableModels) {
-            if(!this.isTableNeedConvert(convertModelEntityCaches, tableModel)) {
-                continue; // 判断是否需要转换
+            if(this.judgeNeedConvert(tableModel.getTableName())) {
+                this.logger.debug("当前表格: {}不进行转换", tableModel.getTableName());
+                continue;
             }
-
             final JavaModel javaModel = new JavaModel();
             javaModel.setTableName(tableModel.getTableName());
             javaModel.setRemark(tableModel.getRemark());
-            javaModel.setJavaName(this.getConvertModelName(convertModelEntityCaches, tableModel));
+            javaModel.setJavaName(this.getConvertModelName(overrideTableCaches, tableModel));
             javaModel.setJavaColumnModels(this.convertJavaColumnModels(tableModel.getTableColumnModels()));
             javaModels.add(javaModel);
         }
@@ -52,16 +56,20 @@ public class JavaModelConvertor {
     }
 
     /**
-     * 如果没有配置includeEntities, 那就需要全部转换, 否则只需要转换部分就可以了.
-     * @param convertModelEntityCaches .
-     * @param tableModel .
+     * 判断当前表是否需要转换
+     * @param currentTable .
      * @return .
      */
-    private boolean isTableNeedConvert(Map<String, NiflheimProperties.ConvertModelEntity> convertModelEntityCaches, TableModel tableModel) {
-        if(CollectionUtils.isEmpty(convertModelEntityCaches)) {
-            return true;
+    private boolean judgeNeedConvert(String currentTable) {
+        // 优先以includeTable进行判断, 再以exclusionTable进行判断
+        if(!CollectionUtils.isEmpty(this.niflheimProperties.getIncludeTables())) {
+            return this.niflheimProperties.getIncludeTables().contains(currentTable);
         }
-        return convertModelEntityCaches.containsKey(tableModel.getTableName());
+
+        if(!CollectionUtils.isEmpty(this.niflheimProperties.getExclusionTables())) {
+            return !this.niflheimProperties.getExclusionTables().contains(currentTable);
+        }
+        return true;
     }
 
     /**
@@ -71,16 +79,16 @@ public class JavaModelConvertor {
      * @param tableModel .
      * @return .
      */
-    private String getConvertModelName(Map<String, NiflheimProperties.ConvertModelEntity> convertModelEntityCaches, TableModel tableModel) {
+    private String getConvertModelName(Map<String, NiflheimProperties.OverrideTable> convertModelEntityCaches, TableModel tableModel) {
         if(convertModelEntityCaches.containsKey(tableModel.getTableName())) {
-            // 如果在include-entities中存在, 使用配置里面的实体名称
+            // 如果在overrideTable中存在, 使用配置里面的实体名称
             return convertModelEntityCaches.get(tableModel.getTableName()).getModelName();
         }
 
         // 如果配置中有配置java-name-suffixes, 就需要将前缀去掉, 然后再进行大小写转换.
         String tableName = tableModel.getTableName();
-        if(!CollectionUtils.isEmpty(this.niflheimProperties.getJavaNameSuffixes())) {
-            tableName = this.niflheimProperties.getJavaNameSuffixes().stream()
+        if(!CollectionUtils.isEmpty(this.niflheimProperties.getRemoveSuffixes())) {
+            tableName = this.niflheimProperties.getRemoveSuffixes().stream()
                     .reduce(tableModel.getTableName(), (result, element) -> result.replaceAll(element, ""));
         }
         return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, tableName);
@@ -101,13 +109,13 @@ public class JavaModelConvertor {
         return javaColumnModels;
     }
 
-    private Map<String, NiflheimProperties.ConvertModelEntity> buildConvertModelCaches() {
-        // 如果配置中没有指定include-entities, 表示需要全部转换.
-        if(CollectionUtils.isEmpty(this.niflheimProperties.getIncludeEntities())) {
+    private Map<String, NiflheimProperties.OverrideTable> buildOverrideTableCaches() {
+        if(CollectionUtils.isEmpty(this.niflheimProperties.getOverrideTables())) {
             return Collections.emptyMap();
         }
-        return this.niflheimProperties.getIncludeEntities().stream()
-                .collect(Collectors.toMap(NiflheimProperties.ConvertModelEntity::getTableName, value -> value));
+
+        return this.niflheimProperties.getOverrideTables().stream()
+                .collect(Collectors.toMap(NiflheimProperties.OverrideTable::getTableName, value -> value));
     }
 
 }
