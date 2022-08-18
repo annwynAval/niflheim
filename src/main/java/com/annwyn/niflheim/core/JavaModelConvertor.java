@@ -8,8 +8,6 @@ import com.annwyn.niflheim.core.models.TableColumnModel;
 import com.annwyn.niflheim.core.models.TableModel;
 import com.annwyn.niflheim.core.registry.AbstractTypeRegistry;
 import com.google.common.base.CaseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -22,8 +20,6 @@ import java.util.stream.Collectors;
 
 @Component
 public class JavaModelConvertor {
-
-    private final Logger logger = LoggerFactory.getLogger(JavaModelConvertor.class);
 
     @Resource
     private AbstractTypeRegistry abstractTypeRegistry;
@@ -41,10 +37,6 @@ public class JavaModelConvertor {
 
         final List<JavaModel> javaModels = new ArrayList<>(tableModels.size());
         for (TableModel tableModel : tableModels) {
-            if(this.judgeNeedConvert(tableModel.getTableName())) {
-                this.logger.debug("当前表格: {}不进行转换", tableModel.getTableName());
-                continue;
-            }
             final JavaModel javaModel = new JavaModel();
             javaModel.setTableName(tableModel.getTableName());
             javaModel.setRemark(tableModel.getRemark());
@@ -53,23 +45,6 @@ public class JavaModelConvertor {
             javaModels.add(javaModel);
         }
         return javaModels;
-    }
-
-    /**
-     * 判断当前表是否需要转换
-     * @param currentTable .
-     * @return .
-     */
-    private boolean judgeNeedConvert(String currentTable) {
-        // 优先以includeTable进行判断, 再以exclusionTable进行判断
-        if(!CollectionUtils.isEmpty(this.niflheimProperties.getIncludeTables())) {
-            return this.niflheimProperties.getIncludeTables().contains(currentTable);
-        }
-
-        if(!CollectionUtils.isEmpty(this.niflheimProperties.getExclusionTables())) {
-            return !this.niflheimProperties.getExclusionTables().contains(currentTable);
-        }
-        return true;
     }
 
     /**

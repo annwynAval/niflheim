@@ -49,6 +49,7 @@ public abstract class AbstractTypeRegistry implements InitializingBean {
     public JDBCType getJdbcType(String typeName) {
         if(!this.jdbcTypeCaches.containsKey(typeName)) {
             this.logger.warn("类型: {}未匹配. 返回varchar类型", typeName);
+            return JDBCType.VARCHAR;
         }
         return this.jdbcTypeCaches.get(typeName);
     }

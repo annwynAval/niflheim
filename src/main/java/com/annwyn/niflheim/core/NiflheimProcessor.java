@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class NiflheimProcessor {
     @Resource
     private AbstractTemplateEngine abstractTemplateEngine;
 
-    public void startProcessor() throws SQLException {
+    public void startProcessor() throws IOException {
         this.logger.info("开始生成实体类. ");
         final List<TableModel> tableModels = this.databaseScanner.scanTables();
         this.logger.info("扫描数据库完成, 一共检索到{}张表", tableModels.size());

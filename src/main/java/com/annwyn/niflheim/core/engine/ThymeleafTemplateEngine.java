@@ -25,8 +25,8 @@ public class ThymeleafTemplateEngine extends AbstractTemplateEngine {
     }
 
     @Override
-    protected void doGeneratorXml(BufferedWriter bufferedWriter, Map<String, Object> parameters) throws IOException {
-        this.templateEngine.process("mapper.java", new Context(Locale.CHINA, parameters), bufferedWriter);
+    protected void doGeneratorXml(BufferedWriter bufferedWriter, Map<String, Object> parameters) {
+        this.templateEngine.process("mapper.xml", new Context(Locale.CHINA, parameters), bufferedWriter);
     }
 
     @Override

@@ -18,11 +18,13 @@ spring:
     
   # 使用ThymeleafTemplateEngine时必须配置. 后缀名在程序中已经写死, 不要配置.
   thymeleaf:
+    enabled: true
     prefix: classpath:/thymeleaf/
     mode: TEXT
 
   # 使用FreemarkerTemplateEngine时必须配置.
   freemarker:
+    enabled: true
     template-loader-path: classpath:/freemarker/
     
 com:
@@ -43,6 +45,8 @@ com:
       output-directory: /Users/annwyn/workspace/workbench/annwyn/niflheim/output
       # 生成实体类的包名, 必填
       package-name: com.annwyn.eris
+      # 启动时是否清除输出目录下的所有文件
+      clean-path-at-startup: true
       # 需要生成的表, 优先级高, 先判断include-tables再判断exclusion-tables
       include-tables:
         - table2

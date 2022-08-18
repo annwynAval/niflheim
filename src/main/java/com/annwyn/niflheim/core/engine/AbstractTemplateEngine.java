@@ -2,21 +2,24 @@ package com.annwyn.niflheim.core.engine;
 
 import com.annwyn.niflheim.configuration.properties.NiflheimProperties;
 import com.annwyn.niflheim.core.models.JavaModel;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ClassUtils;
+import org.springframework.util.FileSystemUtils;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public abstract class AbstractTemplateEngine {
@@ -28,14 +31,17 @@ public abstract class AbstractTemplateEngine {
     @Resource
     protected NiflheimProperties niflheimProperties;
 
-    public void startGenerator(List<JavaModel> javaModels) {
+    public void startGenerator(List<JavaModel> javaModels) throws IOException {
+        if(this.niflheimProperties.isCleanPathAtStartup()) {
+            FileSystemUtils.deleteRecursively(Paths.get(this.niflheimProperties.getOutputDirectory()));
+        }
+
         final String modelPackage = this.niflheimProperties.getPackageName() + ".models", modelPathName = ClassUtils.convertClassNameToResourcePath(modelPackage);
         final String mapperPackage = this.niflheimProperties.getPackageName() + ".mapper", mapperPathName = ClassUtils.convertClassNameToResourcePath(mapperPackage);
         final String repositoryPackage = this.niflheimProperties.getPackageName() + ".repository", repositoryPathName = ClassUtils.convertClassNameToResourcePath(repositoryPackage);
-
         for (JavaModel javaModel : javaModels) {
             try {
-                this.logger.info("开始生成文件: {}", javaModel.getTableName());
+                this.logger.debug("开始生成文件: {}", javaModel.getTableName());
                 Path modelPath = Paths.get(this.niflheimProperties.getOutputDirectory(), modelPathName, javaModel.getJavaName() + ".java");
                 this.checkPath(modelPath);
                 this.generatorModel(modelPath, modelPackage, javaModel);
@@ -112,7 +118,10 @@ public abstract class AbstractTemplateEngine {
             final Map<String, Object> parameters = new HashMap<>();
             parameters.put("packageName", repositoryPackage);
             parameters.put("javaModel", javaModel);
-            parameters.put("imports", Sets.newHashSet(String.format("%s.%s", modelPackage, javaModel.getJavaName()), String.format("%s.%sMapper", mapperPackage, javaModel.getJavaName())));
+            parameters.put("imports", Arrays.asList(
+                    String.format("%s.%s", modelPackage, javaModel.getJavaName()),
+                    String.format("%s.%sMapper", mapperPackage, javaModel.getJavaName())
+            ));
 
             this.doGeneratorRepository(bufferedWriter, parameters);
         }

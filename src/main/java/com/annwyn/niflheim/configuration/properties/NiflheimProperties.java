@@ -18,6 +18,11 @@ import java.util.List;
 public class NiflheimProperties implements Serializable {
 
     /**
+     * 开始时是否清空输出目录
+     */
+    private boolean cleanPathAtStartup = true;
+
+    /**
      * 输出目录
      */
     private String outputDirectory;

@@ -1,34 +1,23 @@
 spring:
   freemarker:
+    enabled: true
     template-loader-path: classpath:/freemarker/
   #  thymeleaf:
   #    prefix: classpath:/thymeleaf/
   #    mode: TEXT
+  thymeleaf:
+    enabled: false
 
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://119.45.127.126:3306/eris?useSSL=false&useUnicode=true&characterEncoding=UTF-8
-    username: root
-    password: Abcd1234#
+  devtools:
+    add-properties: false
 
 com:
   annwyn:
     niflheim:
       template-engine: com.annwyn.niflheim.core.engine.FreemarkerTemplateEngine
       type-registry: com.annwyn.niflheim.core.registry.MysqlTypeRegistry
+      clean-path-at-startup: true
 
-      output-directory: /Users/annwyn/workspace/development/niflheim/eris
-      package-name: com.annwyn.eris.manager.mybatis
-      exclusion-tables:
-        - table1
-      include-tables:
-        - table2
-      override-tables:
-        - model-name: modelName
-          table-name: tableName
-
-      remove-suffixes:
-        - table_suffix
 
 
 
