@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: jdbc:mysql://47.100.211.129:3306/boreads?useSSL=false&useUnicode=true&characterEncoding=UTF-8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: Abcd1234#
+
+com:
+  annwyn:
+    niflheim:
+      output-directory: /Users/annwyn/workbench/development/niflheim/boreads-product
+      package-name: com.annwyn.boreads.product.mybatis
+      start-with-tables:
+        - tbp_
+      remove-suffixes:
+        - tbp_

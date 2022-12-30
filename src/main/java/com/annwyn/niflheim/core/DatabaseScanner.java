@@ -140,6 +140,12 @@ public class DatabaseScanner {
         if(!CollectionUtils.isEmpty(this.niflheimProperties.getExclusionTables())) {
             return !this.niflheimProperties.getExclusionTables().contains(currentTableName);
         }
+
+        if(!CollectionUtils.isEmpty(this.niflheimProperties.getStartWithTables())) {
+            return this.niflheimProperties.getStartWithTables().stream().map(currentTableName::startsWith)
+                    .findAny().orElse(false);
+        }
+
         return true;
     }
 }

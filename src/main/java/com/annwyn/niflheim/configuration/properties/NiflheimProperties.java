@@ -43,6 +43,11 @@ public class NiflheimProperties implements Serializable {
     private List<String> includeTables;
 
     /**
+     * 表名称前缀.
+     */
+    private List<String> startWithTables;
+
+    /**
      * 不需要转换的表, 如果没有设置, 表示转换数据库中所有表
      */
     private List<String> exclusionTables;

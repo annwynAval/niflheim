@@ -2,9 +2,9 @@ spring:
   freemarker:
     enabled: true
     template-loader-path: classpath:/freemarker/
-  #  thymeleaf:
-  #    prefix: classpath:/thymeleaf/
-  #    mode: TEXT
+#  thymeleaf:
+#    prefix: classpath:/thymeleaf/
+#    mode: TEXT
   thymeleaf:
     enabled: false
 
