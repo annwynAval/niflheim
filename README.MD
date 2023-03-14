@@ -53,6 +53,9 @@ com:
       # 忽略生成的表, 优先级低, 先判断include-tables再判断exclusion-tables
       exclusion-tables:
         - table1
+      # 表名称前缀
+      start-with-tables:
+        - tbp_
       # 需要重命名的表
       override-tables:
         - model-name: modelName
@@ -60,6 +63,11 @@ com:
       # 去除表名前缀
       remove-suffixes:
         - table_suffix
-
-
 ```
+
+#### 如何扩展
+##### 1. 数据库扩展
+继承并实现`com.annwyn.niflheim.core.registry.AbstractTypeRegistry`即可实现对其他数据库的支持
+
+##### 2. 输出模式扩展
+继承并实现`com.annwyn.niflheim.core.engine.AbstractTemplateEngine`即可使用其他方式的输出
