@@ -4,8 +4,10 @@
 #### 如何使用
 ##### 1. 打包
 mvn clean package
+
 ##### 2. 执行
 java -jar niflheim.jar
+
 ##### 3. 配置说明
 ```yaml
 # 数据源信息, 必填
@@ -16,58 +18,33 @@ spring:
     username: xxx
     password: xxx
     
-  # 使用ThymeleafTemplateEngine时必须配置. 后缀名在程序中已经写死, 不要配置.
-  thymeleaf:
-    enabled: true
-    prefix: classpath:/thymeleaf/
-    mode: TEXT
-
-  # 使用FreemarkerTemplateEngine时必须配置.
-  freemarker:
-    enabled: true
-    template-loader-path: classpath:/freemarker/
-    
 com:
   annwyn:
     niflheim:
-      # 文件生成引擎. 可选值: com.annwyn.niflheim.core.engine.FreemarkerTemplateEngine与com.annwyn.niflheim.core.engine.ThymeleafTemplateEngine
-      # 可以自行扩展, 只需要继承com.annwyn.niflheim.core.engine.AbstractTemplateEngine即可. 默认选择com.annwyn.niflheim.core.engine.FreemarkerTemplateEngine
-      # com.annwyn.niflheim.core.engine.FreemarkerTemplateEngine使用freemarker生成文件
-      # 模板文件位于resources/freemarker目录下, 可以自行修改生成文件
-      # com.annwyn.niflheim.core.engine.ThymeleafTemplateEngine使用thymeleaf生成文件
-      # 模板文件位于resources/thymeleaf目录下, 可以自行修改生成文件
-      template-engine: com.annwyn.niflheim.core.engine.FreemarkerTemplateEngine
-      # 对应的数据库字段映射. 默认为mysql
-      # 映射数据库类型转换jdbc类型以及jdbc类型转换java类型
-      # 其他数据库需要继承AbstractTypeRegistry并进行配置
-      type-registry: com.annwyn.niflheim.core.registry.MysqlTypeRegistry
-      # 生成实体类的输入目录, 必填
-      output-directory: /Users/annwyn/workspace/workbench/annwyn/niflheim/output
-      # 生成实体类的包名, 必填
-      package-name: com.annwyn.eris
       # 启动时是否清除输出目录下的所有文件
       clean-path-at-startup: true
-      # 需要生成的表, 优先级高, 先判断include-tables再判断exclusion-tables
+      # 生成实体类的输入目录, 必填
+      output-directory: /Users/annwyn/workbench/workspace/annwyn/niflheim/output
+      # 生成实体类的包名, 必填
+      package-name: com.annwyn.eris
+      # 需要生成的表, 支持ant-path进行匹配. 为空表示生成所有表
       include-tables:
         - table2
-      # 忽略生成的表, 优先级低, 先判断include-tables再判断exclusion-tables
-      exclusion-tables:
-        - table1
-      # 表名称前缀
-      start-with-tables:
-        - tbp_
-      # 需要重命名的表
-      override-tables:
-        - model-name: modelName
-          table-name: tableName
       # 去除表名前缀
+      remove-prefixes:
+        - tss_
+      # 去除表名后缀
       remove-suffixes:
-        - table_suffix
+        - tss_
 ```
 
 #### 如何扩展
-##### 1. 数据库扩展
-继承并实现`com.annwyn.niflheim.core.registry.AbstractTypeRegistry`即可实现对其他数据库的支持
+`com.annwyn.niflheim.generator.configure.keyword.KeywordHandle`实现该接口, 扩展关键字识别项
 
-##### 2. 输出模式扩展
-继承并实现`com.annwyn.niflheim.core.engine.AbstractTemplateEngine`即可使用其他方式的输出
+`com.annwyn.niflheim.generator.configure.naming.NamingStrategy`实现该接口, 扩展文件名/类名生成规则
+
+`com.annwyn.niflheim.generator.configure.registry.ColumnRegistry`实现该接口, 扩展数据库字段类型与java类型的映射关系
+
+`com.annwyn.niflheim.generator.engine.AbstractTemplateEngine`继承该类, 替换freemarker进行文件生成
+
+`com.annwyn.niflheim.generator.transfer.TransferProcess`继承该类, 同时添加模版文件, 即可生成其他文件

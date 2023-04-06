@@ -2,11 +2,6 @@ spring:
   freemarker:
     enabled: true
     template-loader-path: classpath:/freemarker/
-#  thymeleaf:
-#    prefix: classpath:/thymeleaf/
-#    mode: TEXT
-  thymeleaf:
-    enabled: false
 
   devtools:
     add-properties: false
@@ -14,10 +9,8 @@ spring:
 com:
   annwyn:
     niflheim:
-      template-engine: com.annwyn.niflheim.core.engine.FreemarkerTemplateEngine
-      type-registry: com.annwyn.niflheim.core.registry.MysqlTypeRegistry
       clean-path-at-startup: true
-
-
-
-
+      template-engine: com.annwyn.niflheim.generator.engine.FreemarkerTemplateEngine
+      column-registry: com.annwyn.niflheim.generator.configure.registry.MySQLColumnRegistry
+      keyword-handle: com.annwyn.niflheim.generator.configure.keyword.MySQLKeywordHandle
+      naming-strategy: com.annwyn.niflheim.generator.configure.naming.DefaultNamingStrategy
