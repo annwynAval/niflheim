@@ -40,6 +40,6 @@ public interface ${className} {
      * @param id ${table.primaryKey.comment!}
      * @return .
      */
-    QueryResponse<String> delete(@PathVariable ${table.primaryKey.propertyType.type} id);
+    QueryResponse<String> delete(${table.primaryKey.propertyType.type} id);
 
 }
